@@ -27,7 +27,7 @@ def StaticallyDeterminate(nodes,bars):
     
     # Compute if b + r = 2j (Equation 3-1 of the textbook)
     if(n_bars + n_reactions < 2*n_nodes):
-        sys.exit("The truss is unstable")
+        sys.exit("The truss is unstable; did you input all of the reaction constraints correctly?")
     elif(n_bars + n_reactions > 2*n_nodes):
         sys.exit("The truss is statically indeterminate, and cannot be resolved using method of joints")
     else:
@@ -95,9 +95,6 @@ def ComputeReactions(nodes):
         pin_y_reaction = -sum_fy - roller_reaction
         pin_node.AddReactionXForce(pin_x_reaction)
         pin_node.AddReactionYForce(pin_y_reaction)
-    # sum of forces in y direction
-
-    # sum of forces in x direction
     # sum of forces in y direction
 
     # sum of forces in x direction
