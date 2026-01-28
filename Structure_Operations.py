@@ -53,7 +53,51 @@ def ComputeReactions(nodes):
     
     # Continue from here
     # Sum of moments about the pin
+    [pin_x, pin_y] = pin_node.location
+    [roller_x, roller_y] = roller_node.location
+    
+    # Initialize your local variables to 0.0
+    roller_reaction = 0.0
+    sum_fx = 0.0
+    sum_fy = 0.0
+    
+    # Iterate through all nodes to sum moments and forces
+    for node in nodes:
+        # This check skips the "Nodes" and "Bars" text rows in your CSV
+        if isinstance(node.location, list) and len(node.location) == 2:
+            [node_x, node_y] = node.location
+            
+            # Step 2: Sum moments about the pin
+            roller_reaction += node.yforce_external * (node_x - pin_x)
+            roller_reaction += node.xforce_external * (pin_y - node_y)
+            
+            # Step 3: Sum external forces (Part of your code)
+            sum_fx += node.xforce_external
+            sum_fy += node.yforce_external
 
+    # Step 2: Calculate and store the roller reaction force
+    if(roller_node.constraint=="roller_no_xdisp"):
+        roller_reaction = -roller_reaction / (pin_y - roller_y)
+        roller_node.AddReactionXForce(roller_reaction)
+    elif(roller_node.constraint=="roller_no_ydisp"):
+        roller_reaction = -roller_reaction / (roller_x - pin_x)
+        roller_node.AddReactionYForce(roller_reaction)
+
+    # Step 3: Compute pin reactions using your logic
+    if roller_node.constraint == "roller_no_xdisp":
+        pin_x_reaction = -sum_fx - roller_reaction
+        pin_y_reaction = -sum_fy
+        pin_node.AddReactionXForce(pin_x_reaction)
+        pin_node.AddReactionYForce(pin_y_reaction)
+
+    elif roller_node.constraint == "roller_no_ydisp":
+        pin_x_reaction = -sum_fx
+        pin_y_reaction = -sum_fy - roller_reaction
+        pin_node.AddReactionXForce(pin_x_reaction)
+        pin_node.AddReactionYForce(pin_y_reaction)
+    # sum of forces in y direction
+
+    # sum of forces in x direction
     # sum of forces in y direction
 
     # sum of forces in x direction
